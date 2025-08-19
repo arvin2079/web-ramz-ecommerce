@@ -49,7 +49,7 @@ class Review(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="reviews"
     )
-    rating = models.PositiveSmallIntegerField(
+    rating = models.FloatField(
         validators=[MinValueValidator(1), MaxValueValidator(5), validate_half_or_whole]
     )
     comment = models.TextField(blank=True)
