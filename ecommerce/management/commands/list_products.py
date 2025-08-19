@@ -27,6 +27,10 @@ class Command(BaseCommand):
             .annotate(avg_rating=Avg("reviews__rating"))
         )
 
+        if products.count() == 0:
+            self.stdout.write("no product found!")
+            return
+
         for product in products:
             tags = ", ".join(tag.name for tag in product.tags.all()) or "no tag found"
             avg_rating = product.avg_rating if product.avg_rating else "no review found"
