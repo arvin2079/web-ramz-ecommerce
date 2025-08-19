@@ -1,14 +1,25 @@
 from django.db.models import Avg
 from rest_framework import viewsets
-from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter
+from django_filters.rest_framework import (
+    DjangoFilterBackend,
+    FilterSet,
+    CharFilter,
+    BaseInFilter,
+)
 
 from ecommerce.models import Product
 from ecommerce.serializers import ProductSerializer
 
 
+# needed because in django-filter, CharFilter with lookup_expr="in" won’t 
+# parse a list of values properly from query params
+class CharInFilter(BaseInFilter, CharFilter):
+    pass
+
+
 class ProductFilter(FilterSet):
     category = CharFilter(field_name="category__name", lookup_expr="iexact")
-    tags = CharFilter(field_name="tags__name", lookup_expr="in")
+    tags = CharInFilter(field_name="tags__name", lookup_expr="in")
 
     class Meta:
         model = Product
