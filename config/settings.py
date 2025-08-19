@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+from dotenv import load_dotenv, dotenv_values
+
+load_dotenv()
+env_vars = dotenv_values(".env.dev")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,12 +28,12 @@ AUTH_USER_MODEL = "users.User"
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!3cs1^*%s4^wcnob5=)+9l$(fs@in_e(#_8hqz0ok4g0@p9o-h'
+SECRET_KEY = env_vars["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -44,6 +49,7 @@ INSTALLED_APPS = [
     # third parties
     'rest_framework',
     'django_filters',
+    'drf_spectacular',
 
     # native apps
     "users",
@@ -139,5 +145,13 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
-    ]
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "WebRamzEcommerce",
+    "DESCRIPTION": "API documentation for the WebRamz E-commerce platform.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
