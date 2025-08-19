@@ -7,6 +7,7 @@ from django_filters.rest_framework import (
     BaseInFilter,
 )
 
+from config.permissions import IsAdminOrReadOnly
 from ecommerce.models import Product
 from ecommerce.serializers import ProductSerializer
 
@@ -30,6 +31,7 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProductFilter
+    permission_classes = [IsAdminOrReadOnly]
 
     def get_queryset(self):
         queryset = (
