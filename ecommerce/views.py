@@ -1,3 +1,29 @@
-from django.shortcuts import render
+from django.db.models import Avg
+from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend, FilterSet, CharFilter
 
-# Create your views here.
+from ecommerce.models import Product
+from ecommerce.serializers import ProductSerializer
+
+
+class ProductFilter(FilterSet):
+    category = CharFilter(field_name="category__name", lookup_expr="iexact")
+    tags = CharFilter(field_name="tags__name", lookup_expr="in")
+
+    class Meta:
+        model = Product
+        fields = ["category", "tags"]
+
+
+class ProductViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = ProductSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilter
+
+    def get_queryset(self):
+        queryset = (
+            Product.objects.select_related("category")
+            .prefetch_related("tags")
+            .annotate(average_rating=Avg("reviews__rating"))
+        )
+        return queryset
